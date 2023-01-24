@@ -15,10 +15,7 @@ from phantom.base_connector import BaseConnector
 # Usage of the consts file is recommended
 from akamaiwaf_consts import *
 
-try:
-    from urllib import unquote
-except:
-    from urllib.parse import unquote
+from urllib.parse import unquote
 # Import Akamai Edgegrid authentication module
 from akamai.edgegrid import EdgeGridAuth
 
@@ -297,7 +294,7 @@ class AkamaiNetworkListsConnector(BaseConnector):
             params['extended'] = param.get("extended")
         if param.get("networklistid"):
             param_networklistid = [x.strip() for x in self._handle_py_ver_compat_for_input_str(param.get("networklistid")).split(',')]
-            param_networklistid = list(filter(None, param_networklistid))
+            param_networklistid = list([_f for _f in param_networklistid if _f])
             if not param_networklistid:
                 return action_result.set_status(phantom.APP_ERROR, "Please provide valid input value in the 'networklistid' action parameter")
 
@@ -325,7 +322,7 @@ class AkamaiNetworkListsConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         param_elements = [x.strip() for x in self._handle_py_ver_compat_for_input_str(param.get("elements")).split(',')]
-        param_elements = list(filter(None, param_elements))
+        param_elements = list([_f for _f in param_elements if _f])
         if not param_elements:
             return action_result.set_status(phantom.APP_ERROR, "Please provide valid input value in the 'elements' action parameter")
 
@@ -366,7 +363,7 @@ class AkamaiNetworkListsConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         param_elements = [x.strip() for x in self._handle_py_ver_compat_for_input_str(param.get("elements")).split(',')]
-        param_elements = list(filter(None, param_elements))
+        param_elements = list([_f for _f in param_elements if _f])
         if not param_elements:
             return action_result.set_status(phantom.APP_ERROR, "Please provide valid input value in the 'elements' action parameter")
 
@@ -436,7 +433,7 @@ class AkamaiNetworkListsConnector(BaseConnector):
         ip_data = []
 
         ip_list = [x.strip() for x in self._handle_py_ver_compat_for_input_str(param.get("list")).split(',')]
-        ip_list = list(filter(None, ip_list))
+        ip_list = list([_f for _f in ip_list if _f])
         if not ip_list:
             return action_result.set_status(phantom.APP_ERROR, "Please provide valid input value in the 'list' action parameter")
 
@@ -525,7 +522,7 @@ class AkamaiNetworkListsConnector(BaseConnector):
         # Notification parameter is used
         if param.get("notification"):
             notifications = [x.strip() for x in self._handle_py_ver_compat_for_input_str(param.get("notification")).split(',')]
-            notifications = list(filter(None, notifications))
+            notifications = list([_f for _f in notifications if _f])
             if not notifications:
                 return action_result.set_status(phantom.APP_ERROR, "Please provide valid input value in the 'notification' action parameter")
 
@@ -678,7 +675,7 @@ class AkamaiNetworkListsConnector(BaseConnector):
         action = self.get_action_identifier()
         action_execution_status = phantom.APP_SUCCESS
 
-        if action in action_mapping.keys():
+        if action in list(action_mapping.keys()):
             action_function = action_mapping[action]
             action_execution_status = action_function(param)
         return action_execution_status
@@ -695,7 +692,7 @@ class AkamaiNetworkListsConnector(BaseConnector):
         if len(params) > 0:
             endpoint = "{}{}".format(endpoint, "?")
 
-            for param, value in params.items():
+            for param, value in list(params.items()):
                 if first_param:
                     endpoint = "{}{}={}".format(endpoint, param, value)
                     first_param = False
